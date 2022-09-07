@@ -1,0 +1,25 @@
+{
+  "root": true,
+  "parser": "@typescript-eslint/parser",
+  "plugins": [
+    "@typescript-eslint",
+    "prettier"
+  ],
+  "extends": [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/eslint-recommended",
+    "plugin:@typescript-eslint/recommended",
+    "prettier"
+  ],
+  "rules": {
+    "max-len": 1,
+    "no-unused-vars": 1,
+    "no-trailing-spaces": 1,
+    "comma-dangle": 0,
+    "spaced-comment": 1,
+    "object-shorthand": 1,
+    "prefer-arrow-callback": 1,
+    "import/prefer-default-export": 1,
+    "prefer-const": 1
+  }
+}
