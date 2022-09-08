@@ -1,10 +1,15 @@
+import { createShip } from './ship'; 
+
+class Gameboard {
+  constructor() {
+    
+  }
+  placeShip() {
+    this.ships.push(createShip());
+  }
+}
 /*
 TODO: 
-Note that we have not yet created any User Interface. We should know our
-code is coming together by running the tests. You shouldn’t be relying on
-console.logs or DOM methods to make sure your code is doing what you expect it
-to. 
-
 Gameboards should be able to place ships at specific coordinates by calling
 the ship factory function. 
 

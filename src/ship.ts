@@ -1,11 +1,11 @@
-type Ship = {
+export type Ship = {
   length: number
   hits: boolean[]
   hit: (index: number) => void
   isSunk: () => boolean 
 }
 
-function createShip(length: number, hits: boolean[]): Ship {
+export function createShip(length: number, hits: boolean[] = []): Ship {
   for (let i = 0; i < length; i++) {
     hits.push(false);
   }
