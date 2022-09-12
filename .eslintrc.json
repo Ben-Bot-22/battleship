@@ -5,7 +5,8 @@
     },
     "extends": [
         "eslint:recommended",
-        "plugin:@typescript-eslint/recommended"
+        "plugin:@typescript-eslint/recommended",
+        "prettier"
     ],
     "overrides": [
     ],
@@ -15,8 +16,19 @@
         "sourceType": "module"
     },
     "plugins": [
-        "@typescript-eslint"
+        "@typescript-eslint",
+        "prettier"
     ],
     "rules": {
+        "max-len": 1,
+        "no-unused-vars": 1,
+        "no-trailing-spaces": 1,
+        "comma-dangle": 0,
+        "spaced-comment": 1,
+        "object-shorthand": 1,
+        "prefer-arrow-callback": 1,
+        "import/prefer-default-export": 0,
+        "prefer-const": 1,
+        "no-undef": 1
     }
 }

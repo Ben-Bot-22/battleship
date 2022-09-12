@@ -1,6 +1,6 @@
-import { Ship, createShip } from '../ship';
+/* eslint-disable */
+import { createShip } from '../ship';
 
-// test hit 
 describe('ship', () => {
   test('hits sink ship', () => {
     const ship = createShip(3);

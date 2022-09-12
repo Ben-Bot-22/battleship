@@ -1,33 +1,32 @@
+/* eslint-disable */
 const path = require('path');
 
 module.exports = {
+  devtool: 'source-map',
   entry: './src/index.ts',
+  mode: 'development',
   output: {
     filename: 'bundle.js',
     path: path.resolve(__dirname, 'dist'),
+    devtoolModuleFilenameTemplate: '[absolute-resource-path]'
   },
-  devtool: 'eval-source-map',
+  // watch: true,
   module: {
     rules: [
       {
-        test: /\.tsx?$/,
+        test: /\.ts$/,
         exclude: /node_modules/,
-        use: {
-          loader: 'babel-loader',
-          options: {
-            presets: [['@babel/preset-typescript', { targets: 'defaults' }]],
-          },
-        },
+        use: 'ts-loader',
+        include: [path.resolve(__dirname, 'src')]
       },
       {
         test: /\.js$/,
         use: ['source-map-loader'],
-        enforce: 'pre',
-      },
-    ],
+        enforce: 'pre'
+      }
+    ]
   },
   resolve: {
-    extensions: ['.tsx', '.ts', '.js'],
-  },
+    extensions: ['.tsx', '.ts', '.js']
+  }
 };
-
