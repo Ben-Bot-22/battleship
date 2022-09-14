@@ -1,6 +1,5 @@
 /* eslint-disable */
 import { GameBoard } from '../game-board';
-// import { Ship } from '../ship';
 
 describe('GameBoard', () => {
   it('Place ship: valid', () => {
@@ -15,7 +14,7 @@ describe('GameBoard', () => {
     expect(board.ships.length).toBe(0);
   });
 
-  it('recieveAttack()', () => {
+  it('receiveAttack()', () => {
     const board = new GameBoard();
     board.placeShip([0, 0], 3, true);
     board.receiveAttack([0, 0]);
@@ -24,15 +23,10 @@ describe('GameBoard', () => {
 
   it('allShipsSunk()', () => {
     const board = new GameBoard();
-    board.placeShip([0, 0], 3, true);
+    board.placeShipsRandomly();
     board.receiveAttack([0, 0]);
     board.receiveAttack([1, 0]);
     board.receiveAttack([2, 0]);
-    expect(board.allShipsSunk()).toBe(true);
+    expect(board.allShipsSunk()).toBe(false);
   });
 });
-
-/*
-TODO: 
-
-*/

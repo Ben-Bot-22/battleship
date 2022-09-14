@@ -2,7 +2,6 @@ export type Ship = {
   length: number;
   hits: boolean[];
   hit: (index: number) => void;
-  isSunk: () => boolean;
 };
 
 export function createShip(length: number, hits: boolean[] = []): Ship {
@@ -14,17 +13,6 @@ export function createShip(length: number, hits: boolean[] = []): Ship {
     hits,
     hit(index: number) {
       hits[index] = true;
-    },
-    isSunk() {
-      for (const hit in hits) {
-        if (!hit) return false;
-      }
-      return true;
     }
   };
 }
-
-/*
-TODO:
-
-*/

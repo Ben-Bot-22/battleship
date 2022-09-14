@@ -1,10 +1,6 @@
 import { GameBoard } from './game-board';
 
-// type player = {
-//   name: string;
-//   gameBoard: GameBoard;
-// };
-export class Player {
+class Player {
   name: string;
   gameBoard: GameBoard;
   constructor(name: string, gameBoard: GameBoard) {
@@ -13,10 +9,10 @@ export class Player {
   }
 }
 
-export class BotAI extends Player {
+class BotAI extends Player {
   attackHistory: [number, number][] = [];
   getRandomCoord() {
-    return Math.floor(Math.random() * this.gameBoard.board.length);
+    return Math.floor(Math.random() * this.gameBoard.SIZE);
   }
   searchAttackHistory(coord: [number, number]) {
     return this.attackHistory.find(
@@ -39,14 +35,3 @@ export class BotAI extends Player {
 
 export const humanPlayer = new Player('Human', new GameBoard());
 export const botPlayer = new BotAI('Bot', new GameBoard());
-
-/*
-TODO:
-Players can take turns playing the game by attacking the enemy Game Board.
-
-The game is played against the computer, so make ‘computer’ players capable of
-making random plays.
-The AI does not have to be smart, but it should know
-whether or not a given move is legal.
-(i.e. it shouldn’t shoot the same coordinate twice).
-*/

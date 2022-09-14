@@ -71,6 +71,37 @@ export class GameBoard {
       }
     }
   }
+  getRandomCoord(): [number, number] {
+    return [Math.floor(Math.random() * 10), Math.floor(Math.random() * 10)];
+  }
+  getRandomDirection() {
+    return Math.random() < 0.5;
+  }
+  randomShipPlacement(length: number) {
+    let coord = this.getRandomCoord();
+    let isHorizontal = this.getRandomDirection();
+    while (!this.shipInBounds(length, coord, isHorizontal)) {
+      coord = this.getRandomCoord();
+      isHorizontal = this.getRandomDirection();
+    }
+    this.placeShip(coord, length, isHorizontal);
+  }
+  placeShipsRandomly() {
+    // 1 4-length ship
+    this.randomShipPlacement(4);
+    // 2 3-length ships
+    for (let i = 0; i < 2; i++) {
+      this.randomShipPlacement(3);
+    }
+    // 3 2-length ships
+    for (let i = 0; i < 3; i++) {
+      this.randomShipPlacement(2);
+    }
+    // 4 1-length ships
+    for (let i = 0; i < 4; i++) {
+      this.randomShipPlacement(1);
+    }
+  }
   receiveAttack(coord: [number, number]) {
     // check if ship is hit
     const coordObj = this.getCoord(coord);
@@ -78,21 +109,42 @@ export class GameBoard {
       coordObj.attacked = true;
       if (coordObj.ship !== null && coordObj.shipIndex !== null) {
         coordObj.ship.hit(coordObj.shipIndex);
+        return true;
       }
     }
+    return false;
+  }
+  isShipAtCoordSunk(coord: [number, number]): boolean {
+    const coordObj = this.getCoord(coord);
+    if (coordObj) {
+      if (coordObj.ship !== null) {
+        return this.isSunk(coordObj.ship);
+      }
+    }
+    return false;
+  }
+  isSunk(ship: Ship) {
+    for (const hit of ship.hits) {
+      if (!hit) {
+        return false;
+      }
+    }
+    return true;
+  }
+  numShipsSunk(): number {
+    let sunk = 0;
+    for (const ship of this.ships) {
+      if (this.isSunk(ship)) {
+        sunk++;
+      }
+    }
+    return sunk;
   }
   allShipsSunk(): boolean {
     for (const ship of this.ships) {
-      if (!ship.isSunk()) return false;
+      const sunk = this.isSunk(ship);
+      if (!sunk) return false;
     }
     return true;
   }
 }
-
-// const gameBoard = new GameBoard();
-// gameBoard.placeShip([0, 0], 3, true);
-// console.log('hello world, love Game Board');
-
-/*
-TODO:
-*/
