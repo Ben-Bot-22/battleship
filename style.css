@@ -1,0 +1,72 @@
+:root {
+  font-family: 'Sigmar One', cursive;
+  --red: #e94560;
+  --turn: #46e863;
+  --purple: #8857d1;
+  --dark-blue: #0f3460;
+  --dark-background: #0f1830;
+  --unit-size: 30px;
+  /* --dark-background: black; */
+}
+
+h1 {
+  font-size: 2.5rem;
+}
+
+.gameboard-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--dark-background);
+  color: white;
+}
+
+.turn {
+  color: var(--turn);
+}
+
+.bot:hover {
+  background-color: var(--red);
+}
+
+.game {
+  display: flex;
+  flex-direction: row;
+  gap: 80px;
+}
+
+@media only screen and (max-width: 600px) {
+  .game {
+    flex-direction: column;
+    gap: 20px;
+  }
+}
+
+.gameboard-grid {
+  display: grid;
+  grid-template-columns: repeat(10, var(--unit-size));
+  grid-template-rows: repeat(10, var(--unit-size));
+}
+
+.coord {
+  border: 1px solid white;
+  background-color: var(--dark-blue);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.ship {
+  background-color: rgb(200, 239, 255);
+}
+
+.attacked {
+  background-color: var(--red);
+}

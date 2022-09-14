@@ -4,9 +4,33 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Sigmar+One&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+    <title>Battleship</title>
   </head>
   <body>
-    <script src="bundle.js"></script>
+    <h1>Battleship</h1>
+    <div class="game">
+      <div class="gameboard-container">
+        <h2>Player</h2>
+        <div class="gameboard-grid" id="player-grid">
+          <!-- <div class="coord" id="ship"></div> -->
+        </div>
+        <div id="player-stats">0 sunk / 10</div>
+      </div>
+      <div class="gameboard-container">
+        <h2>Bot</h2>
+        <div class="gameboard-grid" id="bot-grid">
+          <!-- <div class="coord" id="bot"></div> -->
+        </div>
+        <div id="bot-stats">0 sunk / 10</div>
+      </div>
+    </div>
+    <script src="./bundle.js"></script>
   </body>
 </html>
