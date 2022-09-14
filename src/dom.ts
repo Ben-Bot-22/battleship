@@ -40,12 +40,13 @@ function attack(e: Event) {
   const shipHit = botPlayer.gameBoard.receiveAttack([row, col]);
   target.classList.add('attacked');
   if (shipHit) {
-    alert('Player hit a ship!');
+    let message = 'Player hit a ship!';
     if (botPlayer.gameBoard.isShipAtCoordSunk([row, col])) {
       botStats.innerHTML = `${botPlayer.gameBoard.numShipsSunk()} sunk / 10`;
-      alert('You sank a ship!');
+      message = 'You sank a ship!';
     }
     target.innerHTML = '<span>X</span>';
+    alert(message);
   }
   if (botPlayer.gameBoard.allShipsSunk()) {
     endGame('Player');
@@ -64,17 +65,29 @@ export function botAttack() {
   // console.log(target);
   if (target !== null) target.classList.add('attacked');
   if (shipHit) {
-    alert('Bot hit a ship!');
+    let message = 'Bot hit a ship!';
     if (humanPlayer.gameBoard.isShipAtCoordSunk(coord)) {
       //   increment 0 sunk at the bottom of BOT grid
       playerStats.innerHTML = `${humanPlayer.gameBoard.numShipsSunk()} sunk / 10`;
-      alert('Bot sank a ship!');
+      message = 'Bot sank a ship!';
     }
     if (target !== null) target.innerHTML = '<span>X</span>';
+    alert(message);
   }
   if (humanPlayer.gameBoard.allShipsSunk()) {
     endGame('Bot');
   }
+}
+
+export function resetDOM() {
+  // remove ship classes from all coords
+  const coords = document.querySelectorAll('.coord');
+  coords.forEach((coord) => {
+    // remove attacked, remove x, remove ship
+    coord.classList.remove('attacked');
+    coord.innerHTML = '';
+    coord.classList.remove('ship');
+  });
 }
 
 export function displayPlayerShips() {
@@ -90,7 +103,7 @@ export function displayPlayerShips() {
   }
 }
 
-// test: humanPlayer.gameBoard.isShipAtCoordSunk(coord)
+// Visibility of bot ships for testing purposes
 export function displayBotShips() {
   // for each coordinate in player gameboard, add ship class
   for (const coord of botPlayer.gameBoard.board) {
@@ -103,9 +116,3 @@ export function displayBotShips() {
     }
   }
 }
-
-/*
-TODO:
-end game
-reset game
-*/

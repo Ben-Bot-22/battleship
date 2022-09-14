@@ -4,7 +4,8 @@ import {
   createPlayerGrid,
   createBotGrid,
   displayPlayerShips,
-  displayBotShips
+  displayBotShips,
+  resetDOM
 } from './dom';
 
 function initGame() {
@@ -13,19 +14,24 @@ function initGame() {
   humanPlayer.gameBoard.placeShipsRandomly();
   botPlayer.gameBoard.placeShipsRandomly();
   displayPlayerShips();
-  // displayBotShips();
+  // displayBotShips(); // testing purposes
 }
 
 function resetGame() {
-  // reset gameboards
-  // delete divs and repopulate
-  // reset players
+  // reset gameboards for both players
+  humanPlayer.resetGameBoard();
+  botPlayer.resetGameBoard();
+  resetDOM();
+  humanPlayer.gameBoard.placeShipsRandomly();
+  botPlayer.gameBoard.placeShipsRandomly();
+  displayPlayerShips();
+  // displayBotShips(); // testing purposes
 }
 
 export function endGame(winner: string) {
   alert(`${winner} wins!`);
+  alert('Play again?');
   resetGame();
-  initGame();
 }
 
 initGame();

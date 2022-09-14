@@ -7,6 +7,9 @@ class Player {
     this.name = name;
     this.gameBoard = gameBoard;
   }
+  resetGameBoard() {
+    this.gameBoard = new GameBoard();
+  }
 }
 
 class BotAI extends Player {

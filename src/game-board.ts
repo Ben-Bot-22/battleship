@@ -32,17 +32,17 @@ export class GameBoard {
   }
   shipInBounds(
     length: number,
-    coord: [number, number],
+    startCoord: [number, number],
     isHorizontal: boolean
   ): boolean {
     // if coord is on board
-    if (this.getCoord(coord)) {
+    if (this.getCoord(startCoord)) {
       // check if length is clear in direction
       if (isHorizontal) {
-        if (coord[0] + length < this.SIZE) {
+        if (startCoord[0] + length < this.SIZE) {
           return true;
         }
-      } else if (coord[1] + length < this.SIZE) {
+      } else if (startCoord[1] + length < this.SIZE) {
         return true;
       }
     }
@@ -50,23 +50,23 @@ export class GameBoard {
   }
   placeShip(coord: [number, number], length: number, isHorizontal: boolean) {
     // if ship is in bounds, set has ship to true
-    if (this.shipInBounds(length, coord, isHorizontal)) {
-      const ship = createShip(length);
-      this.ships.push(ship);
-      const coordObj = this.getCoord(coord);
-      if (coordObj) {
-        // mark hasShip true for ship length
-        for (let i = 0; i < length; i++) {
-          let coordObj = null;
-          if (isHorizontal) {
-            coordObj = this.getCoord([coord[0] + i, coord[1]]);
-          } else {
-            coordObj = this.getCoord([coord[0], coord[1] + i]);
-          }
-          if (coordObj) {
-            coordObj.ship = ship;
-            coordObj.shipIndex = i;
-          }
+    const ship = createShip(length);
+    this.ships.push(ship);
+    const coordObj = this.getCoord(coord);
+    if (coordObj) {
+      coordObj.ship = ship;
+      coordObj.shipIndex = 0;
+      // mark hasShip true for ship length
+      for (let i = 1; i < length; i++) {
+        let nextShipCoord = null;
+        if (isHorizontal) {
+          nextShipCoord = this.getCoord([coord[0] + i, coord[1]]);
+        } else {
+          nextShipCoord = this.getCoord([coord[0], coord[1] + i]);
+        }
+        if (nextShipCoord) {
+          nextShipCoord.ship = ship;
+          nextShipCoord.shipIndex = i;
         }
       }
     }
@@ -77,28 +77,67 @@ export class GameBoard {
   getRandomDirection() {
     return Math.random() < 0.5;
   }
+  shipOverlap(
+    length: number,
+    startCoord: [number, number],
+    isHorizontal: boolean
+  ) {
+    // check if ship will overlap another ship
+    const coordObj = this.getCoord(startCoord);
+    if (coordObj && coordObj.ship !== null) {
+      return true;
+    }
+    for (let i = 1; i < length; i++) {
+      if (isHorizontal) {
+        const nextCoord = this.getCoord([startCoord[0] + i, startCoord[1]]);
+        if (nextCoord && nextCoord.ship !== null) {
+          return true;
+        }
+      } else {
+        const nextCoord = this.getCoord([startCoord[0], startCoord[1] + i]);
+        if (nextCoord && nextCoord.ship !== null) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+  validShipPlacement(
+    length: number,
+    startCoord: [number, number],
+    isHorizontal: boolean
+  ) {
+    return (
+      this.shipInBounds(length, startCoord, isHorizontal) &&
+      !this.shipOverlap(length, startCoord, isHorizontal)
+    );
+  }
   randomShipPlacement(length: number) {
-    let coord = this.getRandomCoord();
+    let startCoord = this.getRandomCoord();
     let isHorizontal = this.getRandomDirection();
-    while (!this.shipInBounds(length, coord, isHorizontal)) {
-      coord = this.getRandomCoord();
+    while (!this.validShipPlacement(length, startCoord, isHorizontal)) {
+      startCoord = this.getRandomCoord();
       isHorizontal = this.getRandomDirection();
     }
-    this.placeShip(coord, length, isHorizontal);
+    // console.log('PLACE SHIP: ', startCoord, length, isHorizontal);
+    this.placeShip(startCoord, length, isHorizontal);
   }
   placeShipsRandomly() {
     // 1 4-length ship
-    this.randomShipPlacement(4);
+    this.randomShipPlacement(4); // 4
     // 2 3-length ships
     for (let i = 0; i < 2; i++) {
+      // 6
       this.randomShipPlacement(3);
     }
     // 3 2-length ships
     for (let i = 0; i < 3; i++) {
+      // 6
       this.randomShipPlacement(2);
     }
     // 4 1-length ships
     for (let i = 0; i < 4; i++) {
+      // 4
       this.randomShipPlacement(1);
     }
   }
@@ -124,6 +163,7 @@ export class GameBoard {
     return false;
   }
   isSunk(ship: Ship) {
+    // console.log(ship.hits);
     for (const hit of ship.hits) {
       if (!hit) {
         return false;
