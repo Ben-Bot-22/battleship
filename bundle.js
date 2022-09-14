@@ -10,7 +10,7 @@
 
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.displayBotShips = exports.displayPlayerShips = exports.botAttack = exports.createBotGrid = exports.createPlayerGrid = void 0;
+exports.displayBotShips = exports.displayPlayerShips = exports.resetDOM = exports.botAttack = exports.createBotGrid = exports.createPlayerGrid = void 0;
 const player_1 = __webpack_require__(/*! ./player */ "./src/player.ts");
 const index_1 = __webpack_require__(/*! ./index */ "./src/index.ts");
 const playerGridDiv = document.getElementById('player-grid');
@@ -51,12 +51,13 @@ function attack(e) {
     const shipHit = player_1.botPlayer.gameBoard.receiveAttack([row, col]);
     target.classList.add('attacked');
     if (shipHit) {
-        alert('Player hit a ship!');
+        let message = 'Player hit a ship!';
         if (player_1.botPlayer.gameBoard.isShipAtCoordSunk([row, col])) {
             botStats.innerHTML = `${player_1.botPlayer.gameBoard.numShipsSunk()} sunk / 10`;
-            alert('You sank a ship!');
+            message = 'You sank a ship!';
         }
         target.innerHTML = '<span>X</span>';
+        alert(message);
     }
     if (player_1.botPlayer.gameBoard.allShipsSunk()) {
         (0, index_1.endGame)('Player');
@@ -72,19 +73,29 @@ function botAttack() {
     if (target !== null)
         target.classList.add('attacked');
     if (shipHit) {
-        alert('Bot hit a ship!');
+        let message = 'Bot hit a ship!';
         if (player_1.humanPlayer.gameBoard.isShipAtCoordSunk(coord)) {
             playerStats.innerHTML = `${player_1.humanPlayer.gameBoard.numShipsSunk()} sunk / 10`;
-            alert('Bot sank a ship!');
+            message = 'Bot sank a ship!';
         }
         if (target !== null)
             target.innerHTML = '<span>X</span>';
+        alert(message);
     }
     if (player_1.humanPlayer.gameBoard.allShipsSunk()) {
         (0, index_1.endGame)('Bot');
     }
 }
 exports.botAttack = botAttack;
+function resetDOM() {
+    const coords = document.querySelectorAll('.coord');
+    coords.forEach((coord) => {
+        coord.classList.remove('attacked');
+        coord.innerHTML = '';
+        coord.classList.remove('ship');
+    });
+}
+exports.resetDOM = resetDOM;
 function displayPlayerShips() {
     for (const coord of player_1.humanPlayer.gameBoard.board) {
         if (coord.ship !== null) {
@@ -145,37 +156,37 @@ class GameBoard {
     getCoord(coord) {
         return this.board.find((c) => c.coord[0] === coord[0] && c.coord[1] === coord[1]);
     }
-    shipInBounds(length, coord, isHorizontal) {
-        if (this.getCoord(coord)) {
+    shipInBounds(length, startCoord, isHorizontal) {
+        if (this.getCoord(startCoord)) {
             if (isHorizontal) {
-                if (coord[0] + length < this.SIZE) {
+                if (startCoord[0] + length < this.SIZE) {
                     return true;
                 }
             }
-            else if (coord[1] + length < this.SIZE) {
+            else if (startCoord[1] + length < this.SIZE) {
                 return true;
             }
         }
         return false;
     }
     placeShip(coord, length, isHorizontal) {
-        if (this.shipInBounds(length, coord, isHorizontal)) {
-            const ship = (0, ship_1.createShip)(length);
-            this.ships.push(ship);
-            const coordObj = this.getCoord(coord);
-            if (coordObj) {
-                for (let i = 0; i < length; i++) {
-                    let coordObj = null;
-                    if (isHorizontal) {
-                        coordObj = this.getCoord([coord[0] + i, coord[1]]);
-                    }
-                    else {
-                        coordObj = this.getCoord([coord[0], coord[1] + i]);
-                    }
-                    if (coordObj) {
-                        coordObj.ship = ship;
-                        coordObj.shipIndex = i;
-                    }
+        const ship = (0, ship_1.createShip)(length);
+        this.ships.push(ship);
+        const coordObj = this.getCoord(coord);
+        if (coordObj) {
+            coordObj.ship = ship;
+            coordObj.shipIndex = 0;
+            for (let i = 1; i < length; i++) {
+                let nextShipCoord = null;
+                if (isHorizontal) {
+                    nextShipCoord = this.getCoord([coord[0] + i, coord[1]]);
+                }
+                else {
+                    nextShipCoord = this.getCoord([coord[0], coord[1] + i]);
+                }
+                if (nextShipCoord) {
+                    nextShipCoord.ship = ship;
+                    nextShipCoord.shipIndex = i;
                 }
             }
         }
@@ -186,14 +197,39 @@ class GameBoard {
     getRandomDirection() {
         return Math.random() < 0.5;
     }
+    shipOverlap(length, startCoord, isHorizontal) {
+        const coordObj = this.getCoord(startCoord);
+        if (coordObj && coordObj.ship !== null) {
+            return true;
+        }
+        for (let i = 1; i < length; i++) {
+            if (isHorizontal) {
+                const nextCoord = this.getCoord([startCoord[0] + i, startCoord[1]]);
+                if (nextCoord && nextCoord.ship !== null) {
+                    return true;
+                }
+            }
+            else {
+                const nextCoord = this.getCoord([startCoord[0], startCoord[1] + i]);
+                if (nextCoord && nextCoord.ship !== null) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    validShipPlacement(length, startCoord, isHorizontal) {
+        return (this.shipInBounds(length, startCoord, isHorizontal) &&
+            !this.shipOverlap(length, startCoord, isHorizontal));
+    }
     randomShipPlacement(length) {
-        let coord = this.getRandomCoord();
+        let startCoord = this.getRandomCoord();
         let isHorizontal = this.getRandomDirection();
-        while (!this.shipInBounds(length, coord, isHorizontal)) {
-            coord = this.getRandomCoord();
+        while (!this.validShipPlacement(length, startCoord, isHorizontal)) {
+            startCoord = this.getRandomCoord();
             isHorizontal = this.getRandomDirection();
         }
-        this.placeShip(coord, length, isHorizontal);
+        this.placeShip(startCoord, length, isHorizontal);
     }
     placeShipsRandomly() {
         this.randomShipPlacement(4);
@@ -275,14 +311,19 @@ function initGame() {
     player_1.humanPlayer.gameBoard.placeShipsRandomly();
     player_1.botPlayer.gameBoard.placeShipsRandomly();
     (0, dom_1.displayPlayerShips)();
-    (0, dom_1.displayBotShips)();
 }
 function resetGame() {
+    player_1.humanPlayer.resetGameBoard();
+    player_1.botPlayer.resetGameBoard();
+    (0, dom_1.resetDOM)();
+    player_1.humanPlayer.gameBoard.placeShipsRandomly();
+    player_1.botPlayer.gameBoard.placeShipsRandomly();
+    (0, dom_1.displayPlayerShips)();
 }
 function endGame(winner) {
     alert(`${winner} wins!`);
+    alert('Play again?');
     resetGame();
-    initGame();
 }
 exports.endGame = endGame;
 initGame();
@@ -304,6 +345,9 @@ class Player {
     constructor(name, gameBoard) {
         this.name = name;
         this.gameBoard = gameBoard;
+    }
+    resetGameBoard() {
+        this.gameBoard = new game_board_1.GameBoard();
     }
 }
 class BotAI extends Player {
